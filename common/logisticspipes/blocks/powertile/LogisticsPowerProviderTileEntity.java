@@ -2,6 +2,7 @@ package logisticspipes.blocks.powertile;
 
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -150,6 +151,8 @@ public abstract class LogisticsPowerProviderTileEntity extends LogisticsSolidTil
 		if (sourceRouter == destinationRouter) {
 			return;
 		}
+		HashSet<IRouter> visited = new HashSet<IRouter>();
+		visited.add(sourceRouter);
 		LinkedList<Triplet<IRouter, ForgeDirection, Boolean>> todo = new LinkedList<Triplet<IRouter, ForgeDirection, Boolean>>();
 		todo.add(new Triplet<IRouter, ForgeDirection, Boolean>(sourceRouter, exitOrientation, addBall));
 		while (!todo.isEmpty()) {
@@ -166,6 +169,10 @@ public abstract class LogisticsPowerProviderTileEntity extends LogisticsSolidTil
 					if (nextRouter == destinationRouter) {
 						return;
 					}
+					if (visited.contains(nextRouter)) {
+						continue;
+					}
+					visited.add(nextRouter);
 					outerRouters:
 						for (ExitRoute newExit : nextRouter.getDistanceTo(destinationRouter)) {
 							if (newExit.containsFlag(PipeRoutingConnectionType.canPowerSubSystemFrom)) {
